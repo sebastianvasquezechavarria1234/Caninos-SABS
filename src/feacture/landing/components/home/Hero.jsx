@@ -1,28 +1,36 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { IconAroowRigth } from "../../../../assets/icons/Icons";
-import HeroBg  from '/hero.webp'
 
-export const Hero = () => {
+
+export const Hero = ({title, text, link, to, img, titleTop}) => {
     return (
         <section className="max-w-[900px] mx-auto text-center pt-[120px] max-xl:overflow-hidden">
+            {/* TITLE TOP */}
+            <div className="flex justify-center mb-[40px] items-center gap-[10px]">
+                <img 
+                    src="https://cdn.prod.website-files.com/64618a1be96ff28c75e090c5/646201e94d30162b2569b6a7_moving-circles-animation.svg" 
+                    alt="icons" 
+                    className="w-[15px] translate-y-[-3px]" />
+                <p className="italic underline">{titleTop}</p>
+            </div>
             {/* TITLE */}
             <div className="">
-                <h1 className="mb-[20px]">Comprometidos con el bienestar de quien siempre está a tu lado.</h1>
-                <p className="mb-[20px]">En Caninos SABS nos dedicamos con pasión al bienestar de tu compañero de cuatro patas.
-                    Desde productos especializados hasta servicios de calidad.</p>
+                <h1 className="mb-[20px]">{title}</h1>
+                <p className="mb-[20px]">{text}</p>
                 <Link
                     className="btn bg-[var(--green)] text-white"
-                    to="">
-                    Ver Productos
-                    <IconAroowRigth />
+                    to="/login">
+                    Iniciar session
                 </Link>
                 {/* PICTURE */}
                 <picture className="relative flex justify-center mt-[50px]">
-                    <img 
-                        className="rounded-[10px] shadow-lg relative z-30 w-[70%]" 
-                        src={HeroBg} 
-                        alt="hero" />
+                    <div className="w-[70%] h-[20vw] block max-md:h-[45vw]">
+                        <img 
+                            className="shadow-lg relative z-30 w-full h-full object-cover object-center" 
+                            src={img} 
+                            alt="hero" />
+
+                    </div>
 
                     {/* RAYA */}
                     <img 
@@ -44,6 +52,7 @@ export const Hero = () => {
                         className="right-[10%] w-[80px] top-[-5%] z-40 absolute"
                         src="https://cdn.prod.website-files.com/64618a1be96ff28c75e090c5/64618a1be96ff28c75e09a27_icon-enlarge.svg" 
                         alt="" />
+                   
 
                 </picture>
 

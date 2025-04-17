@@ -7,8 +7,10 @@
 
 *{
   font-family: "League Spartan", sans-serif;
+  scroll-behavior: smooth;
 }
 
+/* ROOT */
 :root{
   --max-w: 1400px;
   --green: #134a45;
@@ -17,6 +19,12 @@
   --border: 1px dashed currentColor;
 }
 
+::selection{
+  background-color: var(--green);
+  color: var(--blue);
+}
+
+/* BODY */
 body{
   background-color: var(--blue);
   color: var(--green);
@@ -34,6 +42,11 @@ h1{
   line-height: 70px;
 }
 
+.ImpactH1{
+  font-size: 8rem;
+  line-height: 100px;
+}
+
 h2{
   font-size: 2.5rem;
 }
@@ -48,8 +61,9 @@ h5{
   font-size: 18px;
 }
 
-a, p{
+a, p, input{
   font-size: 18px;
+  outline: none;
  
 }
 
@@ -63,6 +77,23 @@ a, p{
   font-family: 'Bricolage-text';
   src: url(./assets/font/BricolageGrotesque_24pt-Light.ttf);
 }
+
+
+/* HEADER */
+
+
+
+.header__categoria--ctn{
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+/* HEADER HOVER */
+.header__categoria--btn--hover:hover .header__categoria--ctn{
+  opacity: 1;
+  transform: scaleY(1);
+}
+
 
 /* LANDING HOME HERO */ 
 
@@ -84,7 +115,7 @@ a, p{
 }
 
 .slider{
-  animation: slider 10s infinite linear alternate;
+  animation: slider 20s infinite linear alternate;
 }
 
 .subFooter{
@@ -102,6 +133,12 @@ a, p{
   
 }
 
+/* QUIENES SOMOS */
+
+.QuienesSomos--card{
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.704), rgba(0, 0, 0, 0.063)), url(https://www.dirtydogbeautyclub.com/cdn/shop/files/aussie-in-a-hammock_1707x.jpg?v=1691839783);
+}
+
 /* RESPONSIVE */
 
 @media screen and (max-width: 700px){
@@ -111,6 +148,9 @@ a, p{
   }
   h2{
     font-size: 1.2rem;
+  }
+  h4{
+    font-size: 15px;
   }
   a,p{
     font-size: 12px;

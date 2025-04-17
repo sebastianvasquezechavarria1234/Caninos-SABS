@@ -1,12 +1,12 @@
 import React from "react";
 import {Layout} from '../layout/Layout'
-import { Content } from "../components/login/Content";
+import { Outlet } from "react-router-dom";
 
-export const QuienesSomos = () => {
+export const Categorias = () => {
     return(
         <Layout>
-            <Content />
 
+            <Outlet />
         </Layout>
     )
 }
