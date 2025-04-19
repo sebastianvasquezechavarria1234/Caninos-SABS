@@ -1,19 +1,32 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-export const DashboardCategoriaTable = () => {
-       const [categoria, setCategoria] = useState([])
-    
-        useEffect(() => {
-            const peticionApiCategia = () => {
-                axios.get("http://localhost:3030/categories/")
-                    .then((res) => {
-                        console.log(res.data.categories)
-                        setCategoria(res.data.categories)
-                    })
-            }
-            peticionApiCategia()
-        }, [])
+export const DashboardCategoriaTable = ({ onEdit, reloadFlag, setReloadFlag }) => {
+    const [categorias, setCategorias] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+
+    const fetchCategorias = () => {
+        axios.get("http://localhost:3030/categories/")
+            .then((res) => setCategorias(res.data.categories))
+            .catch((err) => console.error("Error al obtener categorías:", err));
+    };
+
+    useEffect(() => {
+        fetchCategorias();
+    }, [reloadFlag]);
+
+    const handleDelete = async (id) => {
+        const confirmDelete = window.confirm("¿Estás seguro de eliminar esta categoría?");
+        if (!confirmDelete) return;
+
+        try {
+            await axios.delete(`http://localhost:3030/categories/${id}`);
+            setReloadFlag(!reloadFlag);
+        } catch (err) {
+            console.error("Error al eliminar:", err);
+        }
+    };
+
     return (
         <section className="w-[75%]">
             <ul className="bg-white/20 grid gap-[5px] grid-cols-3 border-y border-dashed py-[10px]">
@@ -27,9 +40,9 @@ export const DashboardCategoriaTable = () => {
                     <p className="italic underline pl-[20px] border-r border-dashed">Acciones</p>
                 </li>
             </ul>
-            {/* MAP */}
-            {categoria.map((categoria) => (
-                <ul className=" grid gap-[5px] grid-cols-3 border-b border-dashed py-[10px]">
+
+            {categorias.map((categoria) => (
+                <ul key={categoria.id} className="grid gap-[5px] grid-cols-3 border-b border-dashed py-[10px]">
                     <li>
                         <p className="pl-[20px] line-clamp-1 border-x border-dashed">{categoria.name}</p>
                     </li>
@@ -38,26 +51,53 @@ export const DashboardCategoriaTable = () => {
                     </li>
                     <li>
                         <p className="pl-[20px] border-r border-dashed flex gap-[10px]">
-                            {/* ICON VER */}
-                            <span className="cursor-pointer pt-[1px] px-[7px] bg-green-200">
+                            <span
+                                className="cursor-pointer pt-[1px] px-[7px] bg-green-200"
+                                onClick={() => setSelectedCategory(categoria)}
+                            >
                                 Ver
                             </span>
-                            {/* ICON EDITAR */}
-                            <span className="cursor-pointer pt-[1px] px-[7px] bg-blue-200">
+                            <span
+                                className="cursor-pointer pt-[1px] px-[7px] bg-blue-200"
+                                onClick={() => onEdit(categoria)}
+                            >
                                 Editar
                             </span>
-                            {/* ICON ELIMINAR */}
                             <span
-                                className="cursor-pointer pt-[1px] px-[7px] bg-red-200">
+                                className="cursor-pointer pt-[1px] px-[7px] bg-red-200"
+                                onClick={() => handleDelete(categoria.id)}
+                            >
                                 Eliminar
                             </span>
                         </p>
                     </li>
                 </ul>
-
             ))}
 
+            {/* MODAL INCLUIDO AQUÍ MISMO */}
+            {selectedCategory && (
+                <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center">
+                    <div className="bg-white w-[400px] rounded-[20px] p-[20px] shadow-lg relative">
 
+                        <h2 className="text-xl text-center mb-[20px]">Detalles de Categoría</h2>
+
+                        <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px] flex items-center gap-[10px] mb-[10px]">
+                            <p>Nombre: {selectedCategory.name}</p>
+                        </div>
+
+                        <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px] flex items-center gap-[10px]">
+                            <p>Descripción: {selectedCategory.description}</p>
+                        </div>
+                        {/* Botón para cerrar */}
+                        <button
+                            onClick={() => setSelectedCategory(null)}
+                            className="mt-[15px] btn bg-[var(--green)] text-white w-full flex items-center justify-center cursor-pointer"
+                        >
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            )}
         </section>
-    )
-}
+    );
+};

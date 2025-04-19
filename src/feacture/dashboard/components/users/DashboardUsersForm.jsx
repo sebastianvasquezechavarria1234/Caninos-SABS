@@ -1,124 +1,156 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-export const DashboardUsersForm = () => {
+export const DashboardUsersForm = ({ getUsers, userToEdit, setUserToEdit }) => {
+    const [form, setForm] = useState({
+        fullName: "",
+        email: "",
+        password: "",
+        roleId: "",
+        companyId: "",
+    });
 
-    // ROLES
-    const [roles, setRoles] = useState([])
-
-    useEffect(() => {
-        const peticionApiRoles = () => {
-            axios.get("http://localhost:3030/roles/")
-                .then((res) => {
-                    console.log("roles", res.data)
-                    setRoles(res.data)
-                })
-        }
-
-        peticionApiRoles()
-    }, [])
-
-    // CAMPAÑIAS
-    const [companies, setCompanies] = useState([])
+    const [roles, setRoles] = useState([]);
+    const [companies, setCompanies] = useState([]);
 
     useEffect(() => {
-        const peticionApiCompanies = () => {
-            axios.get("http://localhost:3030/companies/")
-                .then((res) => {
-                    console.log("companies", res.data)
-                    setCompanies(res.data)
-                })
+        axios.get("http://localhost:3030/roles/").then((res) => setRoles(res.data));
+        axios.get("http://localhost:3030/companies/").then((res) => setCompanies(res.data));
+    }, []);
+
+    useEffect(() => {
+        if (userToEdit) {
+            setForm({
+                fullName: userToEdit.fullName,
+                email: userToEdit.email,
+                password: "", // no mostramos contraseña
+                roleId: userToEdit.roleId,
+                companyId: userToEdit.companyId,
+            });
         }
+    }, [userToEdit]);
 
-        peticionApiCompanies()
-    }, [])
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (userToEdit) {
+            axios
+                .put(`http://localhost:3030/users/${userToEdit.id}`, form)
+                .then(() => {
+                    getUsers();
+                    resetForm();
+                });
+
+            // Recargamos la página para ver los cambios
+            window.location.reload()
+        } else {
+            axios
+                .post("http://localhost:3030/users", form)
+                .then(() => {
+                    getUsers();
+                    resetForm();
+                });
+
+            // Recargamos la página para ver los cambios
+            window.location.reload()
+        }
+    };
+
+    const resetForm = () => {
+        setForm({ fullName: "", email: "", password: "", roleId: "", companyId: "" });
+        setUserToEdit(null);
+    };
 
     return (
-        <form
-            className="relative w-full p-[20px] rounded-[20px] shadow-lg bg-white border border-black/10"
-
-        >
+        <form onSubmit={handleSubmit} className="relative w-full p-[20px] rounded-[20px] shadow-lg bg-white border border-black/10">
             <h2 className="mb-[20px] text-center">Usuarios</h2>
             <div className="flex gap-[10px]">
-                {/* NOMRBE */}
-                <label className="block mb top-[20px]">
+                <label className="block">
                     <p className="translate-y-[16px] translate-x-[4px] px-[4px] bg-white inline-flex">Nombre Completo:</p>
                     <input
                         className="w-full border border-black/10 rounded-[10px] bg-white p-[12px] outline-none shadow-md"
                         type="text"
                         placeholder="por Ejemplo: Jabón"
-
+                        name="fullName"
+                        value={form.fullName}
+                        onChange={handleChange}
                         minLength={3}
                         required
                     />
                 </label>
 
-                {/* EMIAL */}
                 <label className="block">
                     <p className="translate-y-[16px] translate-x-[4px] px-[4px] bg-white inline-flex">Email:</p>
                     <input
                         className="w-full border border-black/10 rounded-[10px] bg-white p-[12px] outline-none shadow-md"
                         type="email"
                         placeholder="sebas@gmail.com"
-
+                        name="email"
+                        value={form.email}
+                        onChange={handleChange}
                         minLength={3}
                         required
                     />
                 </label>
             </div>
-                {/* PASSWORD */}
+
+            {!userToEdit && (
                 <label className="block">
                     <p className="translate-y-[16px] translate-x-[4px] px-[4px] bg-white inline-flex">Contraseña:</p>
                     <input
                         className="w-full border border-black/10 rounded-[10px] bg-white p-[12px] outline-none shadow-md"
                         type="password"
                         placeholder="****"
-
+                        name="password"
+                        value={form.password}
+                        onChange={handleChange}
                         minLength={3}
                         required
                     />
                 </label>
-            {/* ROLES */}
+            )}
+
             <label className="block">
                 <p className="translate-y-[16px] translate-x-[4px] px-[4px] bg-white inline-flex">Rol:</p>
                 <select
                     className="w-full border h-[55px] border-black/10 rounded-[10px] bg-white p-[12px] outline-none shadow-md"
+                    name="roleId"
+                    value={form.roleId}
+                    onChange={handleChange}
                     required
                 >
+                    <option value="">Selecciona un rol</option>
                     {roles.map((rol) => (
-                        <option value={rol.name}>{rol.name}</option>
-
+                        <option key={rol.id} value={rol.id}>{rol.name}</option>
                     ))}
                 </select>
             </label>
 
-            {/* COMPAÑIAS */}
             <label className="block">
-                <p className="translate-y-[16px] translate-x-[4px] px-[4px] bg-white inline-flex">Compañia:</p>
+                <p className="translate-y-[16px] translate-x-[4px] px-[4px] bg-white inline-flex">Compañía:</p>
                 <select
                     className="w-full border h-[55px] border-black/10 rounded-[10px] bg-white p-[12px] outline-none shadow-md"
+                    name="companyId"
+                    value={form.companyId}
+                    onChange={handleChange}
                     required
                 >
+                    <option value="">Selecciona una compañía</option>
                     {companies.map((compani) => (
-                        <option value={compani.name}>{compani.name}</option>
-
+                        <option key={compani.id} value={compani.id}>{compani.name}</option>
                     ))}
                 </select>
             </label>
-
-
-
-
-
-
-            {/* SUBMIT */}
 
             <input
                 className="mt-[20px] btn bg-[var(--green)] cursor-pointer text-white w-full"
                 type="submit"
-                value="Registrar usuario"
+                value={userToEdit ? "Actualizar usuario" : "Registrar usuario"}
             />
         </form>
-    )
-}
+    );
+};

@@ -1,51 +1,93 @@
-import React from "react";
+"use client"
 
-export const DashboardRolesForm = () => {
-    return (
-        <form
+import { useState, useEffect } from "react"
+import axios from "axios"
 
-            className="relative w-full p-[20px] rounded-[20px] shadow-lg bg-white border border-black/10"
-        >
-            <h2 className="mb-[20px] text-center">Roles</h2>
+export const DashboardRolesForm = ({ selectedRole, setSelectedRole, setRoles }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+  })
 
+  useEffect(() => {
+    if (selectedRole) {
+      setFormData({
+        name: selectedRole.name,
+        description: selectedRole.description,
+      })
+    } else {
+      setFormData({
+        name: "",
+        description: "",
+      })
+    }
+  }, [selectedRole])
 
-            {/* NOMBRE */}
-            <label className="block mb top-[20px]">
-                <p className="translate-y-[16px] translate-x-[4px] px-[4px] bg-white inline-flex">Nombre:</p>
-                <input
-                    className="w-full border border-black/10 rounded-[10px] bg-white p-[12px] outline-none shadow-md"
-                    type="text"
-                    name="name"
-                    placeholder="por Ejemplo: Admin"
-                    minLength={3}
-                    required
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData({
+      ...formData,
+      [name]: value,
+    })
+  }
 
-                />
-            </label>
+  const handleSubmit = async (e) => {
+    e.preventDefault()
 
-            {/* NIT */}
-            <label className="block mb top-[20px]">
-                <p className="translate-y-[16px] translate-x-[4px] px-[4px] bg-white inline-flex">Descripción:</p>
-                <input
-                    className="w-full border border-black/10 rounded-[10px] bg-white p-[12px] outline-none shadow-md"
-                    type="text"
-                    name="nit"
-                    placeholder="----------"
-                    required
+    try {
+      if (selectedRole) {
+        await axios.put(`http://localhost:3030/roles/${selectedRole.id}`, formData)
+        alert("Rol actualizado con éxito.")
+        window.location.reload() // Recargar la página después de actualizar
+      } else {
+        const respuesta = await axios.post("http://localhost:3030/roles", formData)
+        alert("Rol registrado con éxito.")
+        window.location.reload() // Recargar la página después de registrar
+      }
+    } catch (error) {
+      alert("Error al registrar o actualizar el rol.")
+      console.error("Error detallado:", error)
+    }
+  }
 
-                />
-            </label>
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="relative w-full p-[20px] rounded-[20px] shadow-lg bg-white border border-black/10"
+    >
+      <h2 className="mb-[20px] text-center">Roles</h2>
 
+      <label className="block mb-[15px]">
+        <p className="translate-y-[16px] translate-x-[4px] px-[4px] bg-white inline-flex">Nombre:</p>
+        <input
+          className="w-full border border-black/10 rounded-[10px] bg-white p-[12px] outline-none shadow-md"
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="Por ejemplo: Administrador"
+          minLength={3}
+          required
+        />
+      </label>
 
+      <label className="block">
+        <p className="translate-y-[16px] translate-x-[4px] px-[4px] bg-white inline-flex">Descripción:</p>
+        <textarea
+          className="w-full border border-black/10 rounded-[10px] bg-white p-[12px] outline-none shadow-md min-h-[100px]"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Describe las funciones y permisos de este rol"
+          required
+        />
+      </label>
 
-
-            {/* SUBMIT */}
-            <input
-                className="mt-[20px] btn bg-[var(--green)] cursor-pointer text-white w-full"
-                type="submit"
-                value="Registrar Rol"
-            />
-        </form>
-
-    )
+      <input
+        className="mt-[20px] btn bg-[var(--green)] cursor-pointer text-white w-full"
+        type="submit"
+        value={selectedRole ? "Actualizar Rol" : "Registrar Rol"}
+      />
+    </form>
+  )
 }

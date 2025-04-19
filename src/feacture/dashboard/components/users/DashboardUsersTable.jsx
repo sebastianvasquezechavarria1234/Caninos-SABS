@@ -1,103 +1,118 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { IconCanino, IconDoc, IconUser, IconVerifyque } from "../../../../assets/icons/Icons";
+"use client"
 
-export const DashboardUsersTable = () => {
-     const [users, setUsers] = useState([])
+import axios from "axios"
+import { useEffect, useState } from "react"
+import { IconCanino, IconDoc, IconUser, IconVerifyque } from "../../../../assets/icons/Icons"
 
-     useEffect(() => {
-         const peticionApi = () => {
-             axios.get("http://localhost:3030/users/")
-             .then((res) => {
-                 console.log(res.data)
-                 setUsers(res.data)
-             })
-         }
- 
-         peticionApi()
-     },[])
-    return(
-        <section className="w-[75%]">
-            <ul className="bg-white/20 grid gap-[5px] grid-cols-4 border-y border-dashed py-[10px]">
-               <li>
-                    <p className=" italic underline pl-[20px] border-x border-dashed">Email:</p>
+export const DashboardUsersTable = ({ setUserToEdit, getUsers }) => {
+	const [users, setUsers] = useState([])
+	const [modalUser, setModalUser] = useState(null)
 
-               </li>
-               <li>
-                    <p className=" italic underline pl-[20px] border-r border-dashed">Compañía:</p>
+	const fetchUsers = () => {
+		axios.get("http://localhost:3030/users/")
+			.then((res) => setUsers(res.data))
+			.catch((error) => console.error("Error al obtener usuarios:", error));
+	}
 
-               </li>
-               <li>
-                    <p className=" italic underline pl-[20px] border-r border-dashed">Rol:</p>
+	useEffect(() => {
+		fetchUsers();
+		getUsers && getUsers(fetchUsers); // opcional: pasar refetch al padre
+	}, [])
 
-               </li>
-               <li>
-                    <p className=" italic underline pl-[20px] border-r border-dashed">Acciones</p>
+	const handleDelete = (id) => {
+		if (confirm("¿Estás seguro de eliminar este usuario?")) {
+			axios.delete(`http://localhost:3030/users/${id}`).then(() => fetchUsers());
+		}
+	}
 
-               </li>
-             
-            </ul>
+	return (
+		<section className="w-[75%]">
+			<ul className="bg-white/20 grid gap-[5px] grid-cols-4 border-y border-dashed py-[10px]">
+				<li><p className="italic underline pl-[20px] border-x border-dashed">Email:</p></li>
+				<li><p className="italic underline pl-[20px] border-r border-dashed">Compañía:</p></li>
+				<li><p className="italic underline pl-[20px] border-r border-dashed">Rol:</p></li>
+				<li><p className="italic underline pl-[20px] border-r border-dashed">Acciones</p></li>
+			</ul>
 
-            {/* MAP */}
-            {users.map((user) => (
-               <ul className="grid gap-[5px] grid-cols-4 border-b border-dashed py-[10px]">
-                    <li>
-                         <p className=" pl-[20px] border-x border-dashed">{user.email}</p>
+			{users.map((user, index) => (
+				<ul key={user.id || index} className="grid gap-[5px] grid-cols-4 border-b border-dashed py-[10px]">
+					<li>
+						<p className="pl-[20px] border-x border-dashed">{user.email}</p>
+					</li>
+					<li>
+						<p className="pl-[20px] border-r border-dashed">{user.company?.name || "Sin compañía"}</p>
+					</li>
+					<li>
+						<p className="flex items-center gap-[5px] pl-[20px] border-r border-dashed">
+							{/* PELUQUERO CANINO */}
+							{user.role?.name === "Peluquero Canino" && 
+								<span className="text-red-400 translate-y-[-3px]">
+									<IconCanino />
+								</span>
+							}
+							{/* VETERINARIO */}
+							{user.role?.name === "Veterinario" &&
+								<span className="translate-y-[-3px] text-[var(--purple)]">
+									<IconDoc />
+								</span>
+							}
+							{/* CLIENTE */}
+							{user.role?.name === "Cliente" &&
+								<span className="translate-y-[-3px]  text-[#c69693]">
+									<IconUser />
+								</span>
+							}
+							{/* ADMINISTRADOR */}
+							{user.role?.name === "Administrador" && 
+								<span className="translate-y-[-3px] text-blue-700">
+									<IconVerifyque />
+								</span>
+							}
+							{user.role?.name || "Sin rol"}
+						</p>
+					</li>
+					<li>
+						<p className="pl-[20px] border-r border-dashed flex gap-[10px]">
+							<span onClick={() => setModalUser(user)} className="cursor-pointer pt-[1px] px-[7px] bg-green-200">Ver</span>
+							<span onClick={() => setUserToEdit(user)} className="cursor-pointer pt-[1px] px-[7px] bg-blue-200">Editar</span>
+							<span onClick={() => handleDelete(user.id)} className="cursor-pointer pt-[1px] px-[7px] bg-red-200">Eliminar</span>
+						</p>
+					</li>
+				</ul>
+			))}
 
-                    </li>
-                    <li>
-                         <p className=" pl-[20px] border-r border-dashed">{user.company.name}</p>
+			{modalUser && (
+				<div className="fixed top-0 left-0 w-full h-full bg-black/40 flex justify-center items-center">
+					<div className="bg-white p-5 rounded-[20px] shadow-lg w-[400px]">
+						<h2 className="text-center mb-4">Detalles del Usuario</h2>
 
-                    </li>
-                    <li>
-                         <p className="flex items-center gap-[5px] pl-[20px] border-r border-dashed">
-                              {/* ICON VETERINARIO */}
-                              {user.role.name === "Peluquero Canino" && (
-                                   <span className="translate-y-[-2px]">
-                                        <IconCanino />
-                                   </span>
-                              )}
-                              {/* ICON VETERINARIO */}
-                              {user.role.name === "Veterinario" && (
-                                   <span className="translate-y-[-2px] text-[var(--purple)]">
-                                        <IconDoc />
-                                   </span>
-                              )}
-                              {/* ICON USER */}
-                              {user.role.name === "Cliente" && (
-                                   <span className="translate-y-[-2px] text-[#c69693]">
-                                        <IconUser />
-                                   </span>
-                              )}
-                              {/* ICON ADMIN */}
-                              {user.role.name === "Administrador" && (
-                                   <span className="translate-y-[-2px] text-blue-700">
-                                        <IconVerifyque />
+						<div className="flex flex-col gap-[10px]">
+							<div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
+								<p>Nombre: {modalUser.fullName}</p>
+							</div>
 
-                                   </span>
-                              )}
+							<div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
+								<p>Email: {modalUser.email}</p>
+							</div>
+							<div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
+								<p>Contraseña: {modalUser.password}</p>
+							</div>
 
-                              {/* NOMBRE DEL ROL USUARIO */}
-                              {user.role.name}</p>
+							<div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
+								<p>Rol: {modalUser.role?.name}</p>
+							</div>
 
-                    </li>
-                    <li>
-                         <p className=" pl-[20px] border-r border-dashed flex gap-[10px]">
-                         {/* ICON */}
-                         <span className="cursor-pointer pt-[1px] px-[7px] bg-blue-200">
-                              Editar
-                         </span>
-                         {/* ICON */}
-                         <span className="cursor-pointer pt-[1px] px-[7px] bg-red-200">
-                              Eliminar
-                         </span>
-                         </p>
+							<div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
+								<p>Compañía: {modalUser.company?.name}</p>
+							</div>
+							<button onClick={() => setModalUser(null)} className="mt-[15px] btn bg-[var(--green)] text-white w-full flex items-center justify-center cursor-pointer">
+								Cerrar
+							</button>
 
-                    </li>
-               
-               </ul>
-
-            ))}
-        </section>
-    )
+						</div>
+					</div>
+				</div>
+			)}
+		</section>
+	);
 }

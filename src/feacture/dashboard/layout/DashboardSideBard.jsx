@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { Title } from "../../landing/components/Title";
+// Asegúrate de importar el contexto de autenticacióna
+import { AuthContext } from "../../landing/pages/AuthContext";
 
 export const DashboardSideBar = () => {
-    return(
+    const { logout } = useContext(AuthContext); // Obtenemos la función logout desde el contexto
+
+    const handleLogout = () => {
+        logout(); // Llamamos a la función logout para cerrar sesión
+    };
+
+    return (
         <section className="p-[20px] w-[20%] h-full bg-[var(--green)] text-[var(--blue)]">
 
             {/* NAVEGATION */}
@@ -84,12 +92,18 @@ export const DashboardSideBar = () => {
                     </li>
                 </ul>
                 <ul>
+                    {/* Botón de Cerrar sesión */}
                     <li>
-                        <Link className="btn border">Cerrar session</Link>
+                        <button 
+                            onClick={handleLogout}
+                            className="btn border text-white cursor-pointer"
+                        >
+                            Cerrar sesión
+                        </button>
                     </li>
                 </ul>
             </nav>
 
         </section>
-    )
-}
+    );
+};
