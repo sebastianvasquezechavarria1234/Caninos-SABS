@@ -111,16 +111,38 @@ export const DashboardProductsTable = ({
       {/* Modal de detalles del producto */}
       {showModal && productDetails && (
         <div className="fixed top-0 left-0 w-full h-full bg-black/50 flex justify-center items-center">
-          <div className="bg-white p-[20px] rounded-lg w-[400px]">
-            <h3 className="text-center font-bold text-xl mb-[10px]">Detalles del Producto</h3>
-            <p><strong>Nombre:</strong> {productDetails.name}</p>
-            <p><strong>Precio:</strong> ${productDetails.price}</p>
-            <p><strong>Descripción:</strong> {productDetails.description}</p>
-            <p><strong>Imagen:</strong> <img className="w-[50px] h-[50px] object-cover" src={productDetails.imageUrl} alt="Producto" /></p>
-            <p><strong>Categoría:</strong> {productDetails.category?.name}</p>
+          <div className="bg-white rounded-[20px] p-[20px] max-w-[450px] w-full relative">
+            <h2 className="mb-[15px] text-center">
+              Detalles del Producto
+            </h2>
+            <p>Imagen:</p>
+            {/* PICTURE PRODUCTS */}
+            <picture className="w-full h-[400px] flex justify-center items-center bg-white rounded-[20px] overflow-hidden">
+              <img 
+                className="h-[80%]" 
+                src={productDetails.imageUrl} 
+                alt="Producto" />
+              
+            </picture>
+
+            <div className="bg-white shadow-md mb-[10px] border border-black/10 p-[13px] rounded-[10px]">
+              <p>Nombre: {productDetails.name}</p>
+            </div>
+
+            <div className="bg-white shadow-md mb-[10px] border border-black/10 p-[13px] rounded-[10px]">
+              <p>Precio: ${productDetails.price}</p>
+            </div>
+
+            <div className="bg-white shadow-md mb-[10px] border border-black/10 p-[13px] rounded-[10px]">
+              <p>Categoría: {productDetails.category?.name}</p>
+            </div>
+
+            <div className="bg-white shadow-md  border border-black/10 p-[13px] rounded-[10px]">
+              <p>Descripción: {productDetails.description}</p>
+            </div>
 
             <button
-              className="mt-[10px] w-full bg-gray-500 text-white rounded-lg py-[8px]"
+              className="mt-[15px] btn bg-[var(--green)] text-white w-full flex items-center justify-center cursor-pointer"
               onClick={closeModal}
             >
               Cerrar

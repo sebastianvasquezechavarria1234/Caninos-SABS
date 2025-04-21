@@ -1,30 +1,37 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { DeleteCategories, GetCategories } from "../../PeticionesApi/DashboardPeticionesApi";
 
 export const DashboardCategoriaTable = ({ onEdit, reloadFlag, setReloadFlag }) => {
     const [categorias, setCategorias] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
-    const fetchCategorias = () => {
-        axios.get("http://localhost:3030/categories/")
-            .then((res) => setCategorias(res.data.categories))
-            .catch((err) => console.error("Error al obtener categorías:", err));
-    };
+   
+    // TRAEMOS LA API DE CATEGORIAS
 
     useEffect(() => {
-        fetchCategorias();
-    }, [reloadFlag]);
+        async function PeticionCategories () {
+            const data = await GetCategories()
+            setCategorias(data)
+        }
 
+        PeticionCategories()
+    },[])
+
+
+
+    // ELIMINAMOS 
     const handleDelete = async (id) => {
         const confirmDelete = window.confirm("¿Estás seguro de eliminar esta categoría?");
         if (!confirmDelete) return;
 
+        // ELIMINAMOS LLAMANDO A DELETE CATEGORIES
         try {
-            await axios.delete(`http://localhost:3030/categories/${id}`);
-            setReloadFlag(!reloadFlag);
-        } catch (err) {
-            console.error("Error al eliminar:", err);
+            await DeleteCategories(id)
+        } catch (error) {
+            console.log("error al eliminar categoria", error)
         }
+
     };
 
     return (

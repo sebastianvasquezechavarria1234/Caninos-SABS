@@ -1,52 +1,34 @@
-# React + Vite
+1.paso: clonar el repositorio de la api
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+2.instalar myslq worbrench
 
-Currently, two official plugins are available:
+3.ir a .env de la api y cambiar los datos por defecto por los nuestros
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+4.verficar la coneccion ala base de datos con la api
 
-## Expanding the ESLint configuration
+5.crar un nuevo proyecto en react
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+6.instalar dependencia librerias como bootstrap, tailwind etc
+
+7.creacion del jwt para el login y q se almacene en el localstorage
+
+8.implementacion  de rutas q protegen nuestro ruta dashboard o admin
+
+9.consultamos en el back-end los diferentes medotos definidos alli para poder realizar el consumo de las api y por ende insertar los registros requeridos en cada entidad
 
 
-import React from "react";
-import { Link } from "react-router-dom";
+10.para el registro para la parte del fron-end de cada entidad utilisamos el metodo post 
 
-export const Form = () => {
-    return(
-        <form className="relative w-[350px] p-[20px] rounded-[20px] shadow-lg bg-white border border-black/10" action="">
-            
-            <h2 className="mb-[20px] text-center">Iniciar session</h2>
-            {/* EMAIL */}
-            <label className="block mb top-[20px]">
-                <p className="translate-y-[16px] translate-x-[4px] px-[4px] bg-white inline-flex">Email:</p>
-                <input 
-                    className="w-full border border-black/10 rounded-[10px] bg-white p-[12px] outline-none rounded-[4px] shadow-md" 
-                    type="email" 
-                    placeholder="por Ejem:sebas@gamil.com" 
-                    minLength={6} 
-                    required />
-            </label>
-            
-            {/* EMAIL */}
-            <label className="block">
-                <p className="translate-y-[16px] translate-x-[4px] px-[4px] bg-white inline-flex">Contraseña:</p>
-                <input 
-                    className="w-full border border-black/10 rounded-[10px] bg-white p-[12px] outline-none rounded-[4px] shadow-md" 
-                    type="password" 
-                    placeholder="por Ejem:sebas12345" 
-                    minLength={3} 
-                    required />
-            </label>
-            <Link className="my-[15px] inline-block underline" to="/register">register</Link>
+11.para el ver para la parte del fron-end de cada entidad utilisamos el metodo get
 
-            {/* SUBMIT */}
-            <input className="btn bg-[var(--green)] cursor-pointer text-white w-full" type="submit" value="Iniciar session" />
+12.para el editar para la parte del fron-end de cada entidad utilisamos el metodo put
 
-     
-        </form>
-    )
-}
+13.para el eliminar para la parte del fron-end de cada entidad utilisamos el metodo delete
+
+14.para la eliminacion del token almacenado en el localstorage utilisamos removeItems
+
+15.para mostrar los productos y categorias consumimos las api con el medoto get e isimos un mapeo de la misma
+
+16.tambien usimos uos de los asycn await para controlar las respuestas de nuestras apis
+
+17.utilisamos uso de los try cach para la verrificacion de errores

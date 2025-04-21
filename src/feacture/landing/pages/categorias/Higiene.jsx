@@ -28,9 +28,9 @@ export const Higiene = () => {
                         product.category.name === "Higiene" && (
                             <article className="">
                                 {/* PICTURE */}
-                                <picture className="bg-white w-full h-[400px] flex justify-center items-end rounded-[10px] max-md:h-[200px]">
+                                <picture className="overflow-hidden bg-white w-full h-[400px] flex justify-center items-center rounded-[10px] max-md:h-[200px]">
                                     <img
-                                        className="h-[90%] block"
+                                        className="h-[80%]"
                                         src={product.imageUrl}
                                         alt="picture" />
                                 </picture>

@@ -35,8 +35,8 @@ export const Footer = () => {
                         <Link to="/products">
                             Productos
                         </Link>
-                        <Link to="/services">
-                            Servicios
+                        <Link to="/categorias">
+                            Categorias
                         </Link>
                     </ul>
                     <Link className="btn border" to="/login">

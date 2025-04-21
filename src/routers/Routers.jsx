@@ -30,12 +30,7 @@ export const Routers = () => {
             <Route path="products" element={<Products />} />
             <Route path="services" element={<Services />} />
             {/* CATEGORIAS */}
-            <Route path="categorias" element={<Categorias />}>
-                <Route path="alimentos"  element={<Alimentos />}/>
-                <Route path="juguetes"  element={<Juguetes />}/>
-                <Route path="accesorios"  element={<Accesorios />}/>
-                <Route path="higiene"  element={<Higiene />}/>
-            </Route>
+            <Route path="categorias" element={<Categorias />} />
             <Route path="login" element={<Login />} />
             {/* DASHBOARD */}
             <Route path="dashboard" element={<ProtedRouters />}>

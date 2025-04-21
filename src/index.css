@@ -139,6 +139,13 @@ a, p, input{
   background: linear-gradient(to left, rgba(0, 0, 0, 0.704), rgba(0, 0, 0, 0.063)), url(https://www.dirtydogbeautyclub.com/cdn/shop/files/aussie-in-a-hammock_1707x.jpg?v=1691839783);
 }
 
+
+/* CATEGORIES */
+
+.categories__btn{
+  background-color: #134a450f;
+}
+
 /* RESPONSIVE */
 
 @media screen and (max-width: 700px){
