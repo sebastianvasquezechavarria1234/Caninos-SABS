@@ -31,7 +31,7 @@ export const Card = () => {
                         <h4 className="my-[20px] max-md:my-[10px]">{product.name}</h4>
                         <p>Precio: ${product.price}</p>
                         <p>{product.description}</p>
-                        <p className="italic underline">{product.category.name}</p>
+                        <p className="italic underline">{product.category?.name || "Sin rol"}</p>
                     </div>
 
                 </article>

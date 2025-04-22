@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react"
 import axios from "axios"
+import { GetCategories } from "../../PeticionesApi/PeticionesCompanies"
 
-// Hacemos que las props sean opcionales con valores por defecto
 export const DashboardProductsForm = ({
-  refreshProducts = () => {}, // Función vacía por defecto
+  fetchProducts,
   selectedProduct = null,
-  setSelectedProduct = () => {}, // Función vacía por defecto
+  setSelectedProduct = () => {},
 }) => {
   const [name, setName] = useState("")
   const [price, setPrice] = useState("")
@@ -16,22 +16,15 @@ export const DashboardProductsForm = ({
   const [imageUrl, setImageUrl] = useState("") // URL de la imagen
   const [categoryId, setCategoryId] = useState("")
   const [loading, setLoading] = useState(false)
-
-  // CONSUMO DE API DE CATEGORIAS
+  
+  // CONSUMO DE API DE CATEGORIAS PARA EL CAMPO DE CATEGORIAS
   const [categories, setCategories] = useState([])
-
   useEffect(() => {
-    const consumoApiCategories = () => {
-      axios
-        .get("http://localhost:3030/categories/")
-        .then((res) => {
-          setCategories(res.data.categories)
-        })
-        .catch((error) => {
-          console.error("Error al cargar categorías:", error)
-        })
+    const peticionProducts = async () => {
+      const data = await GetCategories()
+      setCategories(data)
     }
-    consumoApiCategories()
+    peticionProducts()
   }, [])
 
   // Cargar los datos al editar
@@ -43,6 +36,8 @@ export const DashboardProductsForm = ({
       setStock(selectedProduct.stock || "")
       setImageUrl(selectedProduct.imageUrl || "")
       setCategoryId(selectedProduct.categoryId || "")
+    } else {
+      resetForm()
     }
   }, [selectedProduct])
 
@@ -54,9 +49,7 @@ export const DashboardProductsForm = ({
     setStock("")
     setImageUrl("")
     setCategoryId("")
-    if (typeof setSelectedProduct === "function") {
-      setSelectedProduct(null)
-    }
+    setSelectedProduct(null)
   }
 
   const handleSubmit = async (e) => {
@@ -75,27 +68,20 @@ export const DashboardProductsForm = ({
     try {
       if (selectedProduct) {
         // Editar producto
-        const response = await axios.put(`http://localhost:3030/products/${selectedProduct.id}`, productData)
-        console.log("Producto actualizado:", response.data)
+        await axios.put(`http://localhost:3030/products/${selectedProduct.id}`, productData)
         alert("Producto actualizado con éxito")
-        // Recargar la página después de actualizar
-        window.location.reload()
       } else {
         // Crear nuevo producto
-        console.log("Enviando datos:", productData)
-        const response = await axios.post("http://localhost:3030/products", productData)
-        console.log("Producto creado:", response.data)
+        await axios.post("http://localhost:3030/products", productData)
         alert("Producto registrado con éxito")
-        // Recargar la página después de crear
-        window.location.reload()
       }
 
-      // Llamar a refreshProducts solo si es una función
-      if (typeof refreshProducts === "function") {
-        refreshProducts()
-      }
-
+      // Limpiar el formulario
       resetForm()
+      
+      // Actualizar la lista de productos sin recargar la página
+      fetchProducts()
+      
     } catch (err) {
       console.error("Error al guardar producto:", err)
 
@@ -118,7 +104,7 @@ export const DashboardProductsForm = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative w-full p-[20px] rounded-[20px] shadow-lg bg-white border border-black/10"
+      className="sticky top-[20px] w-full p-[20px] rounded-[20px] shadow-lg bg-white border border-black/10"
     >
       <h2 className="mb-[20px] text-center">Productos</h2>
       <div className="flex gap-[10px] flex-wrap md:flex-nowrap">

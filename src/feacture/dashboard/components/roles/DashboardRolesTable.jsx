@@ -1,39 +1,17 @@
 "use client"
 
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
-export const DashboardRolesTable = ({ setSelectedRole }) => {
-  const [roles, setRolesLocal] = useState([])
-  // Estado para controlar qué rol estamos viendo
+export const DashboardRolesTable = ({ roles, setSelectedRole, fetchRoles }) => {
   const [roleToView, setRoleToView] = useState(null)
-  // Estado para controlar si el modal está visible
   const [showModal, setShowModal] = useState(false)
 
-  useEffect(() => {
-    fetchRoles()
-  }, [])
-
-  const fetchRoles = () => {
-    axios
-      .get("http://localhost:3030/roles")
-      .then((res) => {
-        setRolesLocal(res.data)
-      })
-      .catch((error) => {
-        console.error("Error al cargar roles:", error)
-        alert("Error al cargar los roles")
-      })
-  }
-
   const handleDelete = async (id) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar este rol? Esta acción no se puede deshacer.")) {
+    if (window.confirm("Estás seguro de que deseas eliminar este rol")) {
       try {
         await axios.delete(`http://localhost:3030/roles/${id}`)
-
-        // Actualizamos el estado local
-        setRolesLocal(roles.filter((role) => role.id !== id))
-        alert("Rol eliminado con éxito.")
+        fetchRoles()
       } catch (error) {
         console.error("Error al eliminar el rol:", error)
         alert("Error al eliminar el rol.")
@@ -41,13 +19,11 @@ export const DashboardRolesTable = ({ setSelectedRole }) => {
     }
   }
 
-  // Función para manejar el clic en el botón "Ver"
   const handleView = (role) => {
-    setRoleToView(role) // Guardamos el rol que queremos ver
-    setShowModal(true) // Mostramos el modal
+    setRoleToView(role)
+    setShowModal(true)
   }
 
-  // Función para cerrar el modal
   const closeModal = () => {
     setShowModal(false)
     setRoleToView(null)
@@ -77,11 +53,10 @@ export const DashboardRolesTable = ({ setSelectedRole }) => {
           </li>
           <li>
             <p className="pl-[20px] border-r border-dashed flex gap-[10px]">
-              {/* Añadimos el onClick al botón Ver */}
               <span className="cursor-pointer pt-[1px] px-[7px] bg-green-200" onClick={() => handleView(role)}>
                 Ver
               </span>
-              <span  className="cursor-pointer pt-[1px] px-[7px] bg-blue-200" onClick={() => setSelectedRole(role)}>
+              <span className="cursor-pointer pt-[1px] px-[7px] bg-blue-200" onClick={() => setSelectedRole(role)}>
                 Editar
               </span>
               <span
@@ -95,27 +70,20 @@ export const DashboardRolesTable = ({ setSelectedRole }) => {
         </ul>
       ))}
 
-      {/* Modal simple para ver los detalles del rol */}
       {showModal && roleToView && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-[20px] p-[20px] max-w-[450px] w-full relative">
-            {/* Título del modal */}
             <h2 className="mb-[15px] text-center">Detalles del Rol</h2>
-
-            {/* Contenido del modal */}
             <div className="space-y-[10px]">
               <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px] flex items-center gap-[10px]">
                 <p className="">Nombre:</p>
                 <p>{roleToView.name}</p>
               </div>
-
               <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]">
                 <p className="mb-[5px]">Descripción:</p>
                 <p className="text-sm">{roleToView.description || "Sin descripción"}</p>
               </div>
             </div>
-
-            {/* Botón para cerrar */}
             <button
               onClick={closeModal}
               className="mt-[15px] btn bg-[var(--green)] text-white w-full flex items-center justify-center cursor-pointer"

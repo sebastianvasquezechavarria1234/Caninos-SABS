@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 
-export const DashboardRolesForm = ({ selectedRole, setSelectedRole, setRoles }) => {
+export const DashboardRolesForm = ({ selectedRole, setSelectedRole, fetchRoles }) => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -25,10 +25,10 @@ export const DashboardRolesForm = ({ selectedRole, setSelectedRole, setRoles }) 
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    })
+    }))
   }
 
   const handleSubmit = async (e) => {
@@ -38,15 +38,17 @@ export const DashboardRolesForm = ({ selectedRole, setSelectedRole, setRoles }) 
       if (selectedRole) {
         await axios.put(`http://localhost:3030/roles/${selectedRole.id}`, formData)
         alert("Rol actualizado con éxito.")
-        window.location.reload() // Recargar la página después de actualizar
       } else {
-        const respuesta = await axios.post("http://localhost:3030/roles", formData)
+        await axios.post("http://localhost:3030/roles", formData)
         alert("Rol registrado con éxito.")
-        window.location.reload() // Recargar la página después de registrar
       }
+
+      setSelectedRole(null)
+      setFormData({ name: "", description: "" })
+      fetchRoles()
     } catch (error) {
+      console.error("Error al registrar o actualizar el rol:", error)
       alert("Error al registrar o actualizar el rol.")
-      console.error("Error detallado:", error)
     }
   }
 

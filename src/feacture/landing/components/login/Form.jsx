@@ -14,10 +14,8 @@ export const Form = () => {
     const navegation = useNavigate()
 
     const { login } = useContext(AuthContext)
-
-
-    // 
-
+    
+    // PETICION API
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
@@ -27,14 +25,9 @@ export const Form = () => {
             navegation("/dashboard/home")
         } catch (error) {
             console.log("eror al inicioar smepknbípugl", error)
-            setError("Datos incorrecto. intenta de nuevo")
-            
+            setError("Datos incorrecto. intenta de nuevo")       
         }
-
-        
-
     }
-
 
     return(
         <form onSubmit={handleSubmit} className="relative w-[350px] p-[20px] rounded-[20px] shadow-lg bg-white border border-black/10" action="">

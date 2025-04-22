@@ -1,49 +1,38 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
+import { useState } from "react";
+import axios from "axios";
 
-export const DashboardCompaniesTable = ({ setSelectedCompany }) => {
-  const [companies, setCompaniesLocal] = useState([])
+export const DashboardCompaniesTable = ({ companies, setSelectedCompany, fetchCompanies }) => {
   // Estado para controlar qué compañía estamos viendo
-  const [companyToView, setCompanyToView] = useState(null)
+  const [companyToView, setCompanyToView] = useState(null);
   // Estado para controlar si el modal está visible
-  const [showModal, setShowModal] = useState(false)
-
-  useEffect(() => {
-    fetchCompanies()
-  }, [])
-
-  const fetchCompanies = () => {
-    axios.get("http://localhost:3030/companies/").then((res) => {
-      setCompaniesLocal(res.data)
-    })
-  }
+  const [showModal, setShowModal] = useState(false);
 
   const handleDelete = async (id) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar esta compañía? Esta acción no se puede deshacer.")) {
+    if (window.confirm("Estas seguro de que deseas eliminar esta compañía")) {
       try {
-        await axios.delete(`http://localhost:3030/companies/${id}`)
-
-        // Solo actualizamos el estado local
-        setCompaniesLocal(companies.filter((company) => company.id !== id))
-        alert("Compañía eliminada con éxito.")
+        await axios.delete(`http://localhost:3030/companies/${id}`);
+     
+        
+        // Actualizamos la lista de compañías sin recargar la página
+        fetchCompanies();
       } catch (error) {
-        console.error("Error al eliminar la compañía:", error)
-        alert("Error al eliminar la compañía.")
+        console.error("Error al eliminar la compañía:", error);
+        alert("Error al eliminar la compañía.");
       }
     }
-  }
+  };
 
   // Función para manejar el clic en el botón "Ver"
   const handleView = (company) => {
-    setCompanyToView(company) // Guardamos la compañía que queremos ver
-    setShowModal(true) // Mostramos el modal
-  }
+    setCompanyToView(company); // Guardamos la compañía que queremos ver
+    setShowModal(true); // Mostramos el modal
+  };
 
   // Función para cerrar el modal
   const closeModal = () => {
-    setShowModal(false)
-    setCompanyToView(null)
-  }
+    setShowModal(false);
+    setCompanyToView(null);
+  };
 
   return (
     <section className="w-[75%]">
@@ -81,7 +70,6 @@ export const DashboardCompaniesTable = ({ setSelectedCompany }) => {
           </li>
           <li>
             <p className="pl-[20px] border-r border-dashed flex gap-[10px]">
-              {/* Añadimos el onClick al botón Ver */}
               <span className="cursor-pointer pt-[1px] px-[7px] bg-green-200" onClick={() => handleView(company)}>
                 Ver
               </span>
@@ -106,39 +94,29 @@ export const DashboardCompaniesTable = ({ setSelectedCompany }) => {
       {showModal && companyToView && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-[20px] p-[20px] max-w-[450px] w-full relative">
-
-            {/* Título del modal */}
             <h2 className="mb-[15px] text-center">Detalles de la Compañía</h2>
-
-            {/* Contenido del modal */}
             <div className="space-y-[10px]">
-              <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
+              <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px] flex items-center gap-[10px]">
                 <p className="">Nombre:</p>
                 <p>{companyToView.name}</p>
               </div>
-
-              <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
+              <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px] flex items-center gap-[10px]">
                 <p className="">NIT:</p>
                 <p>{companyToView.nit}</p>
               </div>
-
-              <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
+              <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px] flex items-center gap-[10px]">
                 <p className="">Teléfono:</p>
                 <p>{companyToView.phone || "No especificado"}</p>
               </div>
-
-              <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
+              <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px] flex items-center gap-[10px]">
                 <p className="">Email:</p>
                 <p>{companyToView.email || "No especificado"}</p>
               </div>
-
-              <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
+              <div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px] flex items-center gap-[10px]">
                 <p className="">Dirección:</p>
                 <p>{companyToView.address || "No especificada"}</p>
               </div>
             </div>
-
-            {/* Botón para cerrar */}
             <button
               onClick={closeModal}
               className="mt-[15px] btn bg-[var(--green)] text-white w-full flex items-center justify-center cursor-pointer"
@@ -149,5 +127,5 @@ export const DashboardCompaniesTable = ({ setSelectedCompany }) => {
         </div>
       )}
     </section>
-  )
-}
+  );
+};

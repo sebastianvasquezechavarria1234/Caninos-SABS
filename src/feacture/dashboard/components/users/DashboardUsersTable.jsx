@@ -1,27 +1,22 @@
 "use client"
 
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { IconCanino, IconDoc, IconUser, IconVerifyque } from "../../../../assets/icons/Icons"
 
-export const DashboardUsersTable = ({ setUserToEdit, getUsers }) => {
-	const [users, setUsers] = useState([])
+export const DashboardUsersTable = ({ users, setUserToEdit, fetchUsers }) => {
 	const [modalUser, setModalUser] = useState(null)
 
-	const fetchUsers = () => {
-		axios.get("http://localhost:3030/users/")
-			.then((res) => setUsers(res.data))
-			.catch((error) => console.error("Error al obtener usuarios:", error));
-	}
-
-	useEffect(() => {
-		fetchUsers();
-		getUsers && getUsers(fetchUsers); // opcional: pasar refetch al padre
-	}, [])
-
 	const handleDelete = (id) => {
-		if (confirm("¿Estás seguro de eliminar este usuario?")) {
-			axios.delete(`http://localhost:3030/users/${id}`).then(() => fetchUsers());
+		if (confirm("Estas seguro de eliminar este usuario")) {
+			axios.delete(`http://localhost:3030/users/${id}`)
+				.then(() => {
+					fetchUsers();
+				})
+				.catch(error => {
+					console.error("Error al eliminar usuario:", error);
+					alert("Error al eliminar el usuario.");
+				});
 		}
 	}
 
@@ -94,8 +89,8 @@ export const DashboardUsersTable = ({ setUserToEdit, getUsers }) => {
 							<div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
 								<p>Email: {modalUser.email}</p>
 							</div>
-							<div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
-								<p>Contraseña: {modalUser.password}</p>
+							<div className="overflow-hidden bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">
+								<p className="block pr-[16px]">Contraseña: {modalUser.password}</p>
 							</div>
 
 							<div className="bg-white shadow-md border border-black/10 p-[13px] rounded-[10px]  flex items-center gap-[10px]">

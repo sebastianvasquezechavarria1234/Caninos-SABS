@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-export const DashboardUsersForm = ({ getUsers, userToEdit, setUserToEdit }) => {
+export const DashboardUsersForm = ({ fetchUsers, userToEdit, setUserToEdit }) => {
     const [form, setForm] = useState({
         fullName: "",
         email: "",
@@ -27,6 +27,8 @@ export const DashboardUsersForm = ({ getUsers, userToEdit, setUserToEdit }) => {
                 roleId: userToEdit.roleId,
                 companyId: userToEdit.companyId,
             });
+        } else {
+            resetForm();
         }
     }, [userToEdit]);
 
@@ -34,29 +36,27 @@ export const DashboardUsersForm = ({ getUsers, userToEdit, setUserToEdit }) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (userToEdit) {
-            axios
-                .put(`http://localhost:3030/users/${userToEdit.id}`, form)
-                .then(() => {
-                    getUsers();
-                    resetForm();
-                });
-
-            // Recargamos la página para ver los cambios
-            window.location.reload()
-        } else {
-            axios
-                .post("http://localhost:3030/users", form)
-                .then(() => {
-                    getUsers();
-                    resetForm();
-                });
-
-            // Recargamos la página para ver los cambios
-            window.location.reload()
+        try {
+            if (userToEdit) {
+                await axios.put(`http://localhost:3030/users/${userToEdit.id}`, form);
+                alert("Usuario actualizado con éxito.");
+            } else {
+                await axios.post("http://localhost:3030/users", form);
+                alert("Usuario registrado con éxito.");
+            }
+            
+            // Limpiamos el formulario y la selección
+            resetForm();
+            
+            // Actualizamos la lista de usuarios sin recargar la página
+            fetchUsers();
+            
+        } catch (error) {
+            console.error("Error al registrar o actualizar el usuario:", error);
+            alert("Error al registrar o actualizar el usuario.");
         }
     };
 

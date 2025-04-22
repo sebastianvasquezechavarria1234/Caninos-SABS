@@ -17,8 +17,8 @@ export const GetCategories = async () => {
 }
 
 
-// ELIMINAMOS UNA CATEGORÍA
 
+// ELIMINAMOS UNA CATEGORÍA
 export const DeleteCategories = async (id) => {
     try {
         const response = await axios.delete(url+"categories/"+id)
